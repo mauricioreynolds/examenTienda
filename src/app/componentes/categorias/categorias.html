@@ -1,1 +1,23 @@
-<p>categorias works!</p>
+<div class="container mt-4">
+  <h3>Categorías</h3>
+
+  <input class="form-control mb-2"
+         [(ngModel)]="nombre"
+         placeholder="Nombre de categoría">
+
+  <button class="btn btn-primary mb-3" (click)="guardar()">
+    Guardar
+  </button>
+
+  <ul class="list-group">
+    <li class="list-group-item d-flex justify-content-between"
+        *ngFor="let c of lista">
+
+      {{c.nombre}}
+
+      <button class="btn btn-danger btn-sm" (click)="eliminar(c.id)">
+        Eliminar
+      </button>
+    </li>
+  </ul>
+</div>
