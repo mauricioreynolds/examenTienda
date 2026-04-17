@@ -16,13 +16,14 @@ export class Categorias implements OnInit {
 
   constructor(private dbServicio: DbService) {}
 
-  async ngOnInit() {
-    await this.cargar();
-  }
+async ngOnInit() {
+  await this.dbServicio.iniciar();
+  await this.cargar();
+}
 
-  async cargar() {
-    this.lista = await this.dbServicio.listar('categorias');
-  }
+async cargar() {
+  this.lista = await this.dbServicio.listar('categorias');
+}
 
   async guardar() {
     if (!this.nombre) return;

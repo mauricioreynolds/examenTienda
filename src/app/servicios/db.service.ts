@@ -16,6 +16,11 @@ export class DbService {
         return;
       }
 
+      if (this.bd) {
+        resolve();
+        return;
+      }
+
       const solicitud = indexedDB.open('TiendaBD', 1);
 
       solicitud.onupgradeneeded = (e: any) => {
@@ -41,7 +46,12 @@ export class DbService {
   }
 
   async listar(tabla: string): Promise<any[]> {
+    if (!this.bd) {
+      await this.iniciar();
+    }
+    
     if (!this.bd) return [];
+
     const tx = this.bd.transaction([tabla], 'readonly');
     const almacen = tx.objectStore(tabla);
     return new Promise((res) => {
@@ -51,22 +61,21 @@ export class DbService {
   }
 
   async guardar(tabla: string, datos: any): Promise<void> {
-    if (!this.bd) return;
+    if (!this.bd) await this.iniciar();
     const tx = this.bd.transaction([tabla], 'readwrite');
     const almacen = tx.objectStore(tabla);
     
-    // Si tiene ID mayor a 0, es una actualización (put), si no, es nuevo (add)
     if (datos.id) {
       almacen.put(datos);
     } else {
-      delete datos.id; // Nos aseguramos de que IndexedDB genere el ID
+      delete datos.id;
       almacen.add(datos);
     }
     return new Promise((res) => tx.oncomplete = () => res());
   }
 
   async borrar(tabla: string, id: number): Promise<void> {
-    if (!this.bd) return;
+    if (!this.bd) await this.iniciar();
     const tx = this.bd.transaction([tabla], 'readwrite');
     const almacen = tx.objectStore(tabla);
     almacen.delete(id);

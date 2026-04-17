@@ -15,13 +15,14 @@ export class Clientes implements OnInit {
 
   constructor(private db: DbService) {}
 
-  async ngOnInit() {
-    await this.cargar();
-  }
+async ngOnInit() {
+  await this.db.iniciar();
+  await this.cargar();
+}
 
-  async cargar() {
-    this.lista = await this.db.listar('clientes');
-  }
+async cargar() {
+  this.lista = await this.db.listar('clientes');
+}
 
   async guardar() {
     if (!this.cliente.nombre) return;

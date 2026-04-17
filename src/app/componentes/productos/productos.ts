@@ -23,14 +23,15 @@ export class Productos implements OnInit {
 
   constructor(private db: DbService) {}
 
-  async ngOnInit() {
-    await this.cargarTodo();
-  }
+async ngOnInit() {
+  await this.db.iniciar(); 
+  await this.cargarTodo(); 
+}
 
-  async cargarTodo() {
-    this.listaProds = await this.db.listar('productos');
-    this.listaCats = await this.db.listar('categorias');
-  }
+async cargarTodo() {
+  this.listaProds = await this.db.listar('productos');
+  this.listaCats = await this.db.listar('categorias');
+}
 
   obtenerNombreCat(id: any) {
     const cat = this.listaCats.find(c => c.id == id);
