@@ -12,7 +12,14 @@ import { DbService } from '../../servicios/db.service';
 export class Productos implements OnInit {
   listaProds: any[] = [];
   listaCats: any[] = [];
-  prod = { id: null as number | null, nombre: '', precio: 0, idCat: '' };
+  
+  prod = { 
+    id: null as number | null, 
+    nombre: '', 
+    precio: 0, 
+    stock: 0, 
+    idCat: '' 
+  };
 
   constructor(private db: DbService) {}
 
@@ -25,23 +32,33 @@ export class Productos implements OnInit {
     this.listaCats = await this.db.listar('categorias');
   }
 
-  // Simulación de relación 1:N [cite: 39]
-  obtenerCat(id: any) {
-    const c = this.listaCats.find(x => x.id == id);
-    return c ? c.nombre : 'Sin Categoría';
+  obtenerNombreCat(id: any) {
+    const cat = this.listaCats.find(c => c.id == id);
+    return cat ? cat.nombre : 'Sin categoría';
   }
 
   async guardar() {
-    if (!this.prod.nombre || !this.prod.idCat) return;
+    if (!this.prod.nombre || !this.prod.idCat) {
+      alert('Completa el nombre y la categoría');
+      return;
+    }
     await this.db.guardar('productos', { ...this.prod });
-    this.prod = { id: null, nombre: '', precio: 0, idCat: '' };
+    this.limpiar();
     await this.cargarTodo();
   }
 
-  editar(p: any) { this.prod = { ...p }; }
+  editar(p: any) {
+    this.prod = { ...p };
+  }
 
   async eliminar(id: number) {
-    await this.db.borrar('productos', id);
-    await this.cargarTodo();
+    if (confirm('¿Borrar producto?')) {
+      await this.db.borrar('productos', id);
+      await this.cargarTodo();
+    }
+  }
+
+  limpiar() {
+    this.prod = { id: null, nombre: '', precio: 0, stock: 0, idCat: '' };
   }
 }

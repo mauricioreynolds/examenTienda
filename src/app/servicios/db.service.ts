@@ -7,14 +7,12 @@ import { isPlatformBrowser } from '@angular/common';
 export class DbService {
   private bd: any;
 
-  // Inyectamos el ID de la plataforma
   constructor(@Inject(PLATFORM_ID) private platformId: Object) { }
 
   iniciar(): Promise<void> {
     return new Promise((resolve, reject) => {
-      // Verificamos que estemos en el navegador
       if (!isPlatformBrowser(this.platformId)) {
-        resolve(); 
+        resolve();
         return;
       }
 
@@ -43,9 +41,7 @@ export class DbService {
   }
 
   async listar(tabla: string): Promise<any[]> {
-    // Si no hay BD (por estar en el servidor), devolvemos lista vacía
     if (!this.bd) return [];
-    
     const tx = this.bd.transaction([tabla], 'readonly');
     const almacen = tx.objectStore(tabla);
     return new Promise((res) => {
@@ -54,12 +50,18 @@ export class DbService {
     });
   }
 
-  // Haz lo mismo con los métodos guardar y borrar:
   async guardar(tabla: string, datos: any): Promise<void> {
     if (!this.bd) return;
     const tx = this.bd.transaction([tabla], 'readwrite');
     const almacen = tx.objectStore(tabla);
-    datos.id ? almacen.put(datos) : almacen.add(datos);
+    
+    // Si tiene ID mayor a 0, es una actualización (put), si no, es nuevo (add)
+    if (datos.id) {
+      almacen.put(datos);
+    } else {
+      delete datos.id; // Nos aseguramos de que IndexedDB genere el ID
+      almacen.add(datos);
+    }
     return new Promise((res) => tx.oncomplete = () => res());
   }
 

@@ -11,37 +11,31 @@ import { DbService } from '../../servicios/db.service';
 })
 export class Clientes implements OnInit {
   lista: any[] = [];
-  cliente = { id: null as number | null, nombre: '', correo: '' };
+  cliente = { id: null as number | null, nombre: '', nit: '', celular: '' };
 
-  constructor(private dbServicio: DbService) {}
+  constructor(private db: DbService) {}
 
   async ngOnInit() {
     await this.cargar();
   }
 
   async cargar() {
-    this.lista = await this.dbServicio.listar('clientes');
+    this.lista = await this.db.listar('clientes');
   }
 
   async guardar() {
-    if (!this.cliente.nombre || !this.cliente.correo) return;
-    await this.dbServicio.guardar('clientes', { ...this.cliente });
-    this.limpiar();
+    if (!this.cliente.nombre) return;
+    await this.db.guardar('clientes', { ...this.cliente });
+    this.cliente = { id: null, nombre: '', nit: '', celular: '' };
     await this.cargar();
   }
 
-  editar(c: any) {
-    this.cliente = { ...c };
-  }
+  editar(c: any) { this.cliente = { ...c }; }
 
   async eliminar(id: number) {
-    if (confirm('¿Eliminar este cliente?')) {
-      await this.dbServicio.borrar('clientes', id);
+    if (confirm('¿Eliminar cliente?')) {
+      await this.db.borrar('clientes', id);
       await this.cargar();
     }
-  }
-
-  limpiar() {
-    this.cliente = { id: null, nombre: '', correo: '' };
   }
 }
