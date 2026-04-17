@@ -1,54 +1,47 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DbService } from '../../servicios/db.service';
 
 @Component({
   selector: 'app-categorias',
   standalone: true,
-  imports: [FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './categorias.html'
 })
 export class Categorias implements OnInit {
-
-  nombre: string = '';
   lista: any[] = [];
+  nombre: string = '';
+  idEditando: number | null = null;
 
   constructor(private dbServicio: DbService) {}
 
-  ngOnInit() {
-    this.cargar();
+  async ngOnInit() {
+    await this.cargar();
   }
 
-  guardar() {
-    const db = this.dbServicio.obtenerDB();
+  async cargar() {
+    this.lista = await this.dbServicio.listar('categorias');
+  }
 
-    db.transaction('categorias', 'readwrite')
-      .objectStore('categorias')
-      .add({ nombre: this.nombre });
-
+  async guardar() {
+    if (!this.nombre) return;
+    const obj = this.idEditando ? { id: this.idEditando, nombre: this.nombre } : { nombre: this.nombre };
+    await this.dbServicio.guardar('categorias', obj);
     this.nombre = '';
-    this.cargar();
+    this.idEditando = null;
+    await this.cargar();
   }
 
-  cargar() {
-    const db = this.dbServicio.obtenerDB();
-
-    const req = db.transaction('categorias')
-      .objectStore('categorias')
-      .getAll();
-
-    req.onsuccess = () => {
-      this.lista = req.result;
-    };
+  prepararEdit(c: any) {
+    this.nombre = c.nombre;
+    this.idEditando = c.id;
   }
 
-  eliminar(id: number) {
-    const db = this.dbServicio.obtenerDB();
-
-    db.transaction('categorias', 'readwrite')
-      .objectStore('categorias')
-      .delete(id);
-
-    this.cargar();
+  async eliminar(id: number) {
+    if (confirm('¿Desea borrar esta categoria?')) {
+      await this.dbServicio.borrar('categorias', id);
+      await this.cargar();
+    }
   }
 }

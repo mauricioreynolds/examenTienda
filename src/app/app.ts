@@ -1,12 +1,18 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { RouterOutlet, RouterLink } from '@angular/router';
+import { DbService } from './servicios/db.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
+  standalone: true,
+  imports: [RouterOutlet, RouterLink],
+  templateUrl: './app.html'
 })
-export class App {
-  protected readonly title = signal('tienda-app');
+export class App implements OnInit {
+  constructor(private db: DbService) {}
+
+  async ngOnInit() {
+    await this.db.iniciar();
+    console.log("Base de datos lista");
+  }
 }

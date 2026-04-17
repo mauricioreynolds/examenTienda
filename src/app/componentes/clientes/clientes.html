@@ -1,1 +1,37 @@
-<p>clientes works!</p>
+<div class="card shadow border-0">
+  <div class="card-header bg-success text-white">
+    <h5 class="mb-0">Registro de Clientes</h5>
+  </div>
+  <div class="card-body">
+    <div class="row g-2 mb-3">
+      <div class="col-md-5">
+        <input type="text" class="form-control" [(ngModel)]="cliente.nombre" placeholder="Nombre completo">
+      </div>
+      <div class="col-md-5">
+        <input type="email" class="form-control" [(ngModel)]="cliente.correo" placeholder="Correo electrónico">
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-primary w-100" (click)='guardar()'>Guardar</button>
+      </div>
+    </div>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Correo</th>
+          <th class="text-end">Opciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of lista">
+          <td>{{ c.nombre }}</td>
+          <td>{{ c.correo }}</td>
+          <td class="text-end">
+            <button class="btn btn-sm btn-warning me-1" (click)="editar(c)">Editar</button>
+            <button class="btn btn-sm btn-danger" (click)="eliminar(c.id)">Borrar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
