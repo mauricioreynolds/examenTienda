@@ -40,7 +40,7 @@ async cargarTodo() {
 
   async guardar() {
     if (!this.prod.nombre || !this.prod.idCat) {
-      alert('Completa el nombre y la categoría');
+      //alert('Completa el nombre y la categoría');
       return;
     }
     await this.db.guardar('productos', { ...this.prod });

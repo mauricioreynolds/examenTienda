@@ -1,0 +1,40 @@
+<div class="container mt-4">
+  <div class="p-5 mb-4 bg-light border rounded-3 shadow-sm">
+    <h1 class="display-5 fw-bold text-dark">Panel de Mi Tienda</h1>
+    <p class="fs-5 text-muted">Bienvenido al sistema de administración. Aquí puedes ver un resumen de tu base de datos local.</p>
+  </div>
+
+  <div class="row g-4 text-center">
+    
+    <div class="col-md-4">
+      <div class="card shadow-sm border-primary h-100">
+        <div class="card-body">
+          <h2 class="display-4">{{ prodsTotales }}</h2>
+          <p class="text-muted fw-bold">PRODUCTOS</p>
+          <button class="btn btn-primary w-100" routerLink="/productos">Ver Todo</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card shadow-sm border-success h-100">
+        <div class="card-body">
+          <h2 class="display-4">{{ catsTotales }}</h2>
+          <p class="text-muted fw-bold">CATEGORÍAS</p>
+          <button class="btn btn-success w-100" routerLink="/categorias">Ver Todo</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card shadow-sm border-info h-100">
+        <div class="card-body">
+          <h2 class="display-4">{{ clisTotales }}</h2>
+          <p class="text-muted fw-bold">CLIENTES</p>
+          <button class="btn btn-info text-white w-100" routerLink="/clientes">Ver Todo</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
