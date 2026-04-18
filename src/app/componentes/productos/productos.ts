@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DbService } from '../../servicios/db.service';
@@ -10,28 +10,30 @@ import { DbService } from '../../servicios/db.service';
   templateUrl: './productos.html'
 })
 export class Productos implements OnInit {
+
   listaProds: any[] = [];
   listaCats: any[] = [];
-  
-  prod = { 
-    id: null as number | null, 
-    nombre: '', 
-    precio: 0, 
-    stock: 0, 
-    idCat: '' 
+
+  prod: any = {
+    id: null,
+    nombre: '',
+    precio: 0,
+    stock: 0,
+    idCat: null
   };
 
-  constructor(private db: DbService) {}
+  constructor(private db: DbService, private cd: ChangeDetectorRef) {}
 
-async ngOnInit() {
-  await this.db.iniciar(); 
-  await this.cargarTodo(); 
-}
+  async ngOnInit() {
+    await this.db.iniciar();
+    await this.cargarTodo();
+  }
 
-async cargarTodo() {
-  this.listaProds = await this.db.listar('productos');
-  this.listaCats = await this.db.listar('categorias');
-}
+  async cargarTodo() {
+    this.listaProds = await this.db.listar('productos');
+    this.listaCats = await this.db.listar('categorias');
+    this.cd.detectChanges();
+  }
 
   obtenerNombreCat(id: any) {
     const cat = this.listaCats.find(c => c.id == id);
@@ -39,13 +41,13 @@ async cargarTodo() {
   }
 
   async guardar() {
-    if (!this.prod.nombre || !this.prod.idCat) {
-      //alert('Completa el nombre y la categoría');
-      return;
-    }
+    if (!this.prod.nombre || !this.prod.idCat) return;
+
     await this.db.guardar('productos', { ...this.prod });
+
     this.limpiar();
     await this.cargarTodo();
+    this.cd.detectChanges();
   }
 
   editar(p: any) {
@@ -53,13 +55,12 @@ async cargarTodo() {
   }
 
   async eliminar(id: number) {
-    if (confirm('¿Borrar producto?')) {
-      await this.db.borrar('productos', id);
-      await this.cargarTodo();
-    }
+    await this.db.borrar('productos', id);
+    await this.cargarTodo();
+    this.cd.detectChanges();
   }
 
   limpiar() {
-    this.prod = { id: null, nombre: '', precio: 0, stock: 0, idCat: '' };
+    this.prod = { id: null, nombre: '', precio: 0, stock: 0, idCat: null };
   }
 }
